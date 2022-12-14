@@ -3,58 +3,82 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<!-- Latest compiled and minified CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 
+<!-- Latest compiled JavaScript -->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Insert title here</title>
+<title>미션 목록</title>
 </head>
-<body>
-	<script>
+<style>
+td {
+	max-height: 236px;
+}
+</style>
+<div class="container mt-3">
+	<div class="mt-4 p-5 text-black rounded">
+		<h1>The Nordic</h1>
+		<p>걷기 보다 더 좋은 걷기</p>
+	</div>
+</div>
+<hr style="border: 1px color= silver; margin-left: 5%" width="90%">
 
-		  
-      function paser(data,n) {
-    	  //last page 정해줌
-    	  let reallastpage = $("#endpage").val();
-    	  (data[0].pagepart%8 === 0)? $("#endpage").val(parseInt(data[0].pagepart/8)) : $("#endpage").val(parseInt(data[0].pagepart/8+1));
-    	  console.log("n = "+reallastpage);
-    	  let start =  ((n-1)*10)+1; 
-    	  let lastpage = $("#endpage").val();
-    	  
-    	 
-    	  let end = start+9;
-    	  var pagestr = "";
-    	  var first = "";
+<body style="align-items:  center;">
+	<script>
+	//페이징 과정
+	function pageing(data,n) {
+  	  let reallastpage = $("#endpage").val();
+  	  (data[0].pagepart%8 === 0)? $("#endpage").val(parseInt(data[0].pagepart/8)) : $("#endpage").val(parseInt(data[0].pagepart/8+1));
+  	  reallastpage = $("#endpage").val();
+  	  let start =  ((n-1)*10)+1; 
+  	  let lastpage = $("#endpage").val();
+  	  
+  	  let end = start+9;
+  	  var pagestr = "";
+  	  var first = "";
 		  var last = "";
 		
-    	  if(start>10){
-    		  first = first+ "<input type='button' onclick='changePage(1,1)' value='[처음]' /><input type='button' onclick='changePage("+(start-1)+","+(parseInt(start/8))+")' value='[이전]' />";  
-    	  }
-    	  if(end >=lastpage ){
-    		  console.log("start1 : "+start);
-    		  console.log("end1 : "+end);
-    		  console.log("lastpage1 : "+lastpage);
-    		  end = lastpage;
-    		  for(start ;start<=end ;start++){
-    			  pagestr = pagestr+"<input id='inputremote' type='button' onclick='changePage("+start+","+start+")' value='["+start+"]'>";
-    		  }
-    	  }else{
-    		  for(start ;start<=end ;start++ ){
-    		  console.log("start"+start);
-    		  console.log("end"+end);
-    		  console.log("lastpage"+lastpage);
-        		  pagestr = pagestr+"<input id='inputremote' type='button' onclick='changePage("+start+","+start+")' value='["+start+"]'>";
-    			}
-    	  }
-    	  if(end<reallastpage){
-    		  last = last+ "<input type='button' onclick='changePage("+lastpage+","+(parseInt(lastpage/8))+")' value='[다음]'>"+"<input type='button' onclick='changePage("+lastpage+","+(parseInt(lastpage/8))+")' value='[끝]'>";  
-    	  }
-    	  var total = first + pagestr + last;
-    	  $("#testconter").html(total);
+  	  if(start>10){
+  		  first = first+ "<input class='btn btn-outline-secondary' type='button' onclick='changePage(1,1)' value='처음' /><input class='btn btn-outline-secondary' type='button' onclick='changePage("+(start-1)+","+(parseInt(start/10))+")' value='이전' />";  
+  	  }
+  	  if(end >=lastpage ){ //총페이지 보다 마지막페이지가 큰 경우 마지막 페이지는 총 페이지 수와 같아야 한다
+  		  end = lastpage;
+  		  for(start ;start<=end ;start++){
+  			  if(start != end){
+  	      		  pagestr = pagestr+"<input class='btn btn-outline-secondary' id='inputremote' type='button' onclick='changePage("+start+","+(parseInt(start/10)+1)+")' value='"+start+"'>";
+  	  		  }else{
+  	      		  pagestr = pagestr+"<input class='btn btn-outline-secondary' id='inputremote' type='button' onclick='changePage("+start+","+(parseInt((start-10)/10)+1)+")' value='["+start+"]'>";
+  	  		  }
+  		  }
+  	  }else{ //총 페이지보다 마지막 페이지가 작은 경우 10개를 추출해야 한다
+  		  for(start ;start<=end ;start++ ){
+  		  if(start !== end){
+      		  pagestr = pagestr+"<input class='btn btn-outline-secondary' id='inputremote' type='button' onclick='changePage("+start+","+(parseInt(start/10)+1)+")' value='"+start+"'>";
+  		  }else{
+      		  pagestr = pagestr+"<input class='btn btn-outline-secondary' id='inputremote' type='button' onclick='changePage("+start+","+(parseInt((start-10)/10)+1)+")' value='"+start+"'>";
+  		  }
+  			}
+  	  }
+  	  if(end<reallastpage){ //마지막 페이지로 이동하는 버튼 추가 
+  		  last = last+ "<input class='btn btn-outline-secondary' type='button' onclick='changePage("+start+","+(parseInt(lastpage/10))+")' value='다음'>"+"<input class='btn btn-outline-secondary' type='button' onclick='changePage("+lastpage+","+(parseInt(lastpage/8))+")' value='끝'>";  
+  	  }
+  	  var total = first + pagestr + last;
+  	  $("#pagelist").html(total);
+	}
+		  
+	//받은 데이터 list화 시켜줌
+     function paser(data,n) {
+    	  console.log(data);
     	  
     	  if (data.length > 0) {
-          var td = $(".listTable");
+          var td = $("#listTable");
 
           var count = 0;
           for (i in data) {
@@ -74,15 +98,17 @@
             if (count < 5) {
          var row = $(".tableRow").append(
                 $("<td/>").append(													
-                   "<pre><a href='missionDetail.jsp?mission_no="+mission_no+"'> <img style='max-width: 200px ; max-height: 200px' src='http://localhost/image/" +mission_no
-                  +"'></a><br>미션명 : " +mission_name +"<br>기간 : "+start_date+"~"+end_date+"<br>난이도 : "+level_code+"<br>포인트 :"+point+"</pre>" 
-                )
+                   	    "<div class='card' style='min-width: 275px ;' ><a href='missionDetail.jsp?mission_no="+mission_no+"'> <div class='card-header' style='min-height: 200px ;' ;> <img style='width: 250px ; height: 142px' src='http://localhost/api/image/" +mission_no
+                        +"'></div></a><biv class='card-body'>미션명 : " +mission_name +"<br>기간 : "+start_date+"~"+end_date+"<br>난이도 : "+level_code+"<br>포인트 :"+point+"</div></div>" 
+
+        )
               );
             } else {
               var row2 = $(".tableRow2").append(
                 $("<td/>").append(
-                		  "<pre><a href=missionDetail.jsp?mission_no="+mission_no+"'> <img style='max-width: 200px ; max-height: 200px' src='http://localhost/image/" +mission_no+"'></a><br>미션명 : " +mission_name +"<br>기간 : "+start_date+"~"+end_date+"<br>난이도 : "+level_code+"<br>포인트 :"+point+"</pre>" 
-                )
+                	    "<div class='card' style='min-width: 275px ;' ><a href='missionDetail.jsp?mission_no="+mission_no+"'> <div class='card-header' style='min-height: 200px ;' ;> <img style='width: 250px ; height: 142px' src='http://localhost/api/image/" +mission_no
+                        +"'></div></a><biv class='card-body'>미션명 : " +mission_name +"<br>기간 : "+start_date+"~"+end_date+"<br>난이도 : "+level_code+"<br>포인트 :"+point+"</div></div>" 
+                      )
               );
             }
             td.append(row);
@@ -90,35 +116,110 @@
           }
           $(".datatable").append(td);
         }
+    	  
+    	  pageing(data,n);
+    	  
+    	  
       }
+	
+		//first
       function page(nowpage){
-    	  var url = "http://localhost/list?pageNum="+nowpage;
-          fetch(url)
+    	  var url = "http://localhost/api/list?pageNum="+nowpage;
+          fetch(url) 	
             .then((response) => response.json())
-            .then((data) => paser(data,1));
+            .then((data) => paser(data,1))
       }
+		
+		
       function changePage(nowpage,start){
     	  $("td").remove();
     		
-    	  var url = "http://localhost/list?pageNum="+nowpage;
+    	  var url = "http://localhost/api/list?pageNum="+nowpage;
           fetch(url)
             .then((response) => response.json())
             .then((data) => paser(data,start) )
-          .then(() => console.log(nowpage))
       }
+		
+      //select에 따른 html변화
+     function searchchange(){
+    	 var optionval= $("#searchoptions").val();
+    	 console.log(optionval);
+    	 if(optionval===""){
+    		 $("#changearea").html("");
+    	 }
+    	 
+    	 if(optionval==="missionname"){
+    		 var changehtml = "<input type='text' id='firstval'> <input type='button' id='submitbutton' value='찾기' onclick='searchstart()'> "
+        		 $("#changearea").html(changehtml);
+    	 }
+    	 
+    	 if(optionval==="term"){
+    		 var changehtml = "<input type='date' id='firstval' >~<input type='date' id='secondval'> <input type='button' id='submitbutton' value='찾기' onclick='searchstart()'> "
+        		 $("#changearea").html(changehtml);
+    	 }
+    	 
+     }
       
+      //찾기 button을 누르면 작동 필요한건 nowpage와 paramter를 전달하는 방법
+     function searchstart() {
+		var first = $("#firstval").val();
+		var second = $("#secondval").val();
+		console.log("first : "+first);
+		console.log("second : "+second );
+		if(second == null){
+			//nowpage + first
+			var fetchurl = "http://localhost/api/search?first="+first+"&second="+second+"&pageNum="+1;
+			console.log(fetchurl);
+			fetch(fetchurl)
+			.then((response) => response.json())
+			.then((data) => console.log(data))
+		/* 	$.ajax({
+				url : "http://localhost/api/search",
+				method : "GET",
+				mode : "cors",
+				data : JSON.stringify({
+					"first" : $("#firstval").val(),
+					 "pageNum" : 1
+				}),
+				success : function (data) {
+					console.log(data);
+				},
+				error : function (error) {
+					console.log(error)
+				}
+				
+			}) */
+		}else{
+			//nowpage+first+second
+			var fetchurl = "http://localhost/api/search?first="+first+"&second="+second+"&pageNum="+1;
+			console.log(fetchurl);
+			fetch(fetchurl)
+			.then((response) => response.json())
+			.then((data) => console.log(data))
+		}
+		
+	}
       $(document).ready(function () {
     	  page(1);
       });
     </script>
+	<input id="endpage" type="hidden">
+	<div class="container">
+		<div class="container mt-3">
+			<div id="listTable">
+				<div class="tableRow" style="max-height: 800px; min-width: 600px"></div>
+				<div class="tableRow2" style="max-height: 800px; min-width: 600px"></div>
+			</div>
+			<br>
 
-	<div class="datatable">
-		<table class="listTable" border="1">
-			<tr class="tableRow" style="max-height: 900px; min-width: 600px"></tr>
-			<tr class="tableRow2" style="max-height: 900px; min-width: 600px"></tr>
-		</table>
-		<input id="endpage" type="hidden">
-		<center id="testconter"></center>
+			<spen id="pagelist"></spen>
+			<spen id="search"> <select id="searchoptions"
+				onchange="searchchange()"><option id="" value="">검색방법을
+					선택하세요</option>
+				<option id="term" value="term">기간</option>
+				<option id="missionname" value="missionname">미션명</option></select> </spen>
+			<span id="changearea"> </span>
+		</div>
 	</div>
 </body>
 </html>

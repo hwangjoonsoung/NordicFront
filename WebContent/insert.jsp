@@ -5,11 +5,103 @@
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Latest compiled and minified CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- Latest compiled JavaScript -->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript"
 	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=68f650077e726d080433ae45c322df48&libraries=services,clusterer,drawing"></script>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<style type="text/css">
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
+body {
+  background: #f5f5f5;
+  color: #333;
+  font-family: arial, helvetica, sans-serif;
+  font-size: 32px;
+}
+
+h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+p {
+  font-size: 20px;
+  line-height: 1.5;
+  margin: 40px auto 0;
+  max-width: 640px;
+}
+
+pre {
+  background: #eee;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  padding: 20px;
+}
+
+form {
+  margin: 40px auto 0;
+}
+
+label {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+input {
+  border: 2px solid #333;
+  border-radius: 5px;
+  color: #333;
+  font-size: 32px;
+  margin: 0 0 20px;
+  padding: .5rem 1rem;
+  width: 100%;
+
+}
+
+button {
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 5px;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 1rem;
+}
+
+button:hover {
+  background: #333;
+  border: 2px solid #333;
+  color: #fff;
+}
+
+.main {
+  background: #fff;
+  border: 5px solid #ccc;
+  border-radius: 10px;
+  margin: 40px auto;
+  padding: 40px;
+  width: 80%;
+  max-width: 700px;
+}
+
+</style>
 <script>
 	function post() {
 		window.open("", "post", "width=200,height=300,scrollbars=yes");
@@ -78,7 +170,7 @@
 		changeevent()
 		$("#submitBtn").click(function() {
 			$.ajax({
-				url : "http://localhost/mission",
+				url : "http://localhost/api/mission",
 				method : "post",
 				contentType : "application/json",
 				data : JSON.stringify({
@@ -94,10 +186,10 @@
 					use_yn : "Y",
 					create_member : "changevalue",
 					update_member : "changevalue",
-				}),
+				})
 				success : function(success) {
 					$.ajax({
-						url : "http://localhost/image/test",
+						url : "http://localhost/api/image/test",
 						type : "POST",
 						data : new FormData($("#upload-file-form")[0]),
 						enctype : 'multipart/form-data',
@@ -121,68 +213,66 @@
 		});
 	});//document end
 </script>
-<title>Document</title>
+<title>미션 등록</title>
 </head>
 <body>
-	<table border="1">
-		<tr>
-			<th>mission_name</th>
-			<td><input type="text" id="mission_name" name="mission_name" /></td>
-		</tr>
-		<tr>
-			<th>시작일</th>
-			<td><input type="date" name="start_date" id="start_date"></td>
-		</tr>
-		<tr>
-			<th>종료일</th>
-			<td><input type="date" name="end_date" id="end_date"></td>
-		</tr>
-		<tr>
-			<th>level_code</th>
-			<td><select name="level_code" id="level_code">
+	<div class="container mt-3">
+		<div class="mt-4 p-5 text-black rounded">
+			<h1>The Nordic</h1>
+		</div>
+	</div>
+	<hr style="border: 1px color= silver; margin-left: 5%" width="90%">
+
+	<div class="main">
+
+		<form style="max-width: 400px;" id="upload-file-form"
+			enctype="multipart/form-data">
+			<div class="mb-3 mt-3">
+				<label class="form-label">미션명</label> <input type="text"
+					id="mission_name" name="mission_name" class="form-control" />
+			</div>
+			<div class="mb-3 mt-3" style="display: inline;">
+				<label class="form-label">시작일</label> <input type="date"
+					name="start_date" id="start_date" class="form-control">
+			</div>
+			<div class="mb-3 mt-3" style="display: inline;">
+				<label class="form-label">종료일</label> <input type="date"
+					name="end_date" id="end_date" class="form-control">
+			</div>
+			<div class="mb-3 mt-3">
+				<label class="form-label">난이도</label> <select
+					class="form-control" name="level_code" id="level_code">
 					<option value="">선택하세요</option>
 					<option value="상">상</option>
 					<option value="중">중</option>
 					<option value="하">하</option>
-			</select></td>
-		</tr>
-		<tr>
-			<th>point</th>
-			<td><input type="text" name="point" id="point" /></td>
-		</tr>
-		<tr>
-		<tr>
-			<th>우편번호</th>
-			<td><input type="text" size="5" maxlength="5" name="zip_code"
-				id="zip_code" /> <input type="button" value="주소검색"
-				onclick="openDaumPostcode()" /></td>
-		</tr>
-		<tr>
-			<th>주소</th>
-			<td><input type="text" size="50" name="address1" id="address1"
-				 /> <br> <input type="text" size="50"
-				name="address2" id="address2"  onfocus="changeevent()"/></td>
-		</tr>
-		<tr>
-			<td colspan="2" id="map" style="width: 500px; height: 400px;"></td>
-		</tr>
-		<tr>
-			<th>사진</th>
-			<td>
-				<form id="upload-file-form" enctype="multipart/form-data">
-					<input type="file" multiple="multiple" name="uploadfiles"
-						id="uploadfiles">
-				</form>
-			</td>
-		</tr>
-		<tr>
-			<th>설명</th>
-			<td><textarea name="remark" id="remark" cols="30" rows="10"></textarea></td>
-		</tr>
-		<tr>
-			<td colspan="2" align="center"><input type="button"
-				id="submitBtn" value="전송" /></td>
-		</tr>
-	</table>
+				</select>
+			</div>
+			<div class="mb-3 mt-3">
+				<label class="form-label">포인트<input class="form-control"
+					type="text" name="point" id="point" />
+			</div>
+			<div class="mb-3 mt-3">
+				<label class="form-label">우편번호 <input  class="form-control" type="text" size="5"
+					maxlength="5" name="zip_code" id="zip_code" /> <input  class="form-control"
+					type="button" value="주소검색" onclick="openDaumPostcode()" />
+			</div>
+			<div class="mb-3 mt-3">
+				<label class="form-label">주소 <input class="form-control"
+					type="text" size="50" name="address1" id="address1" /><input
+					class="form-control" type="text" size="50" name="address2"
+					id="address2" onfocus="changeevent()" />
+			</div>
+			<div colspan="2" id="map" style="width: 400px; height: 400px;"></div>
+			<div class="mb-3 mt-3">
+				<label class="form-label">사진 <input class="form-control"
+					type="file" multiple="multiple" name="uploadfiles" id="uploadfiles">
+			</div>
+			<tr>
+				<td colspan="2" align="center"><input type="button" class="form-control"
+					id="submitBtn" value="전송" /></td>
+			</tr>
+		</form>
+	</div>
 </body>
 </html>
